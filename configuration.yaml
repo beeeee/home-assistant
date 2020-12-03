@@ -1,0 +1,234 @@
+homeassistant:
+  #name: Home
+  #latitude: !secret home_map_lat
+  #longitude: !secret home_map_long
+  #elevation: 87
+  #unit_system: metric
+  #time_zone: !secret home_location
+  allowlist_external_dirs: [/config/]
+  customize: !include customize.yaml
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+sensor: !include sensor.yaml
+
+# database
+recorder:
+  purge_keep_days: 90
+  db_url: !secret hass_db_url
+  exclude:
+    domains:
+      - automation
+      - weblink
+      - updater
+    entities:
+      - sun.sun # Don't record sun data
+      - sensor.last_boot # Comes from 'systemmonitor' sensor platform
+      - sensor.dark_sky_humidity
+      - sensor.dark_sky_humidity_0d
+      - sensor.dark_sky_icon
+      - sensor.dark_sky_icon_0d
+      - sensor.dark_sky_precip
+      - sensor.dark_sky_precip_0d
+      - sensor.dark_sky_precip_accumulation_0d
+      - sensor.dark_sky_precip_intensity
+      - sensor.dark_sky_precip_intensity_0d
+      - sensor.dark_sky_precip_probability
+      - sensor.dark_sky_precip_probability_0d
+      - sensor.dark_sky_summary
+      - sensor.dark_sky_summary_0d
+
+lovelace:
+  mode: yaml
+  resources:
+    [ {url: /hacsfiles/lovelace-layout-card/layout-card.js,                                           type: module}, 
+      {url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js,                               type: module},
+      {url: /hacsfiles/light-entity-row/light-entity-row.js,                                          type: module},
+      {url: /hacsfiles/mini-media-player/mini-media-player-bundle.js,                                 type: module},
+      {url: /hacsfiles/list-card/list-card.js,                                                        type: module},
+      {url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js,                              type: module},
+      {url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js,                                     type: module},
+      {url: /hacsfiles/bar-card/bar-card.js,                                                          type: module},
+      {url: /hacsfiles/button-card/button-card.js,                                                    type: module},
+      {url: /hacsfiles/lovelace-card-mod/card-mod.js,                                                 type: module},
+      {url: /hacsfiles/lovelace-card-tools/card-tools.js,                                             type: module},
+      {url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js,                              type: module},
+      {url: /hacsfiles/popup-backdrop-filter/popup-backdrop-filter.js,                                type: module},
+      {url: /hacsfiles/stack-in-card/stack-in-card.js,                                                type: module},
+      {url: /hacsfiles/swipe-card/swipe-card.js,                                                      type: module},
+      {url: /hacsfiles/light-entity-card/light-entity-card.js,                                        type: js},
+      {url: /local/custom-lovelace/camera-card/camera-card.js,                                        type: module}, 
+      {url: /local/custom-lovelace/weather-card/weather-card.js,                                      type: module} ]
+  dashboards:
+    lovelace-wip:
+      mode: yaml
+      title: WIP
+      icon: mdi:flask
+      show_in_sidebar: true
+      filename: ui-lovelace-wip.yaml
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+sun:
+cloud:
+hassio:
+mobile_app:
+config:
+history:
+logbook:
+map:
+system_health:
+discovery:
+smartir:
+zeroconf:
+ssdp:
+webhook:
+ffmpeg:
+
+hacs:
+  token: ad81b0293cc6a739d26c0b7b1746f9691cb12886
+
+weather:
+  - platform: darksky
+    api_key: !secret darksky_apikey
+    mode: daily
+
+# Broadlink RM Mini 3 (IR)
+# switch:
+#   - platform: broadlink
+#     host: !secret broadlink_address
+#     mac: 'C8:F7:42:54:BD:89'
+#     timeout: 15
+#     type: rm_mini
+#     switches:
+#       tv:
+#         friendly_name: "Living Room TV"
+#         command_on: 'JgCwBAk7CRkJOwoABaUJPAkZCRkJGQkZCRkJOwk8CRkJOwkZCRkJGQk7ChkJAAXqCTwJGQkZCRkJGQk7CRkJGQk8CRkJOwk8CTsJGQk7CgAFpgk7CRkJGQkZCRkJGQk7CTwJGQk7CRkJGQkZCTsKGQkABeoJPAkZCRkJGQkZCTsJGQkZCTwJGQk7CTwJOwkZCTwJAAWlCTwJGQkZCRkJGQkZCTsJPAkZCTsJGQkZCRkJPAkZCQAF6wk7CRkJGQkZCRkJOwkZCRkJPAkZCTsJPAk7CRkJPAkABaUKOwkZCRkJGQkZCRkJOwk8CRkJOwkZCRkJGQk8CRkJAAXqCjsJGQkZCRkJGQk7CRkJGQk8CRkJOwk8CTsJGQk8CQAFpgk7CRkJGQkZCRkJGQk7CTwJGQk7CRkJGQkZCTwJGQkABeoKOwkZCRkJGQkZCTsJGQkZCTwJGQk7CTwJOwkZCTwJAAWlCjsJGQkZCRkJGQkZCTsJPAkZCTsJGQkZCRkJPAkZCQAF6wk7CRkJGQkZCRkJOwoYCRkJPAkZCTsJPAk7CRkJPAkABaUKOwkZCRkJGQkZCRkJOwk8CRkJOwkZCRkJGQk8CRkJAAXqCjsJGQkZCRkJGQk7CRkJGQk8CRkJOwk8CTsJGQk8CQAFqAc7CRkJGQkZCRkJGQk7CjsJGQk7CRkJGQkZCTwJGQkABeoKOwkZCRkJGQkZCTsKGAkZCTwJGQk7CTwJOwkZCTwJAAWlCjsJGQkZCRkJGQkZCTsKOwkZCTsJGQkZCRkJPAkZCQAF7Ag7CRkJGQkZCRkJOwoYChgJPAkZCTsKOwk7ChgJPAkABaUKOwkZCRkJGQkZCRkJOwo7CRkJOwoYCRkJGQk8CRkJAAXqCjsJGQkZCRkJGQk7ChgKGAo7CRkJOwk8CTsKGAk8CQAFpgk7CRkJGQkZCRkJGQk7CjsJGQk7ChgJGQkZCTwJGQkABeoKOwkZCRkJGQkZCTsKGAoYCjsJGQk7CjsJOwoYCTwJAAWlCjsJGQkZCRkJGQkZCTsKOwkZCTwJGAoYChgJPAkZCQAF7Ag7CRkJGQkZCRkJOwoYChgKOwkZCTsKOwk7ChgJPAkABaUKOwkZCRkJGQkZCRkJOwo7CRkJOwoYChgJGQk8CRkJAAXqCjsJGQkZCRkJGQk7ChgKGAo7CRkJOwo7CTsKGAk8CQAFpgk7CRkJGQkZCRkJGQk7CjsJGQk7ChgKGAkZCTwJGQkABeoKOwkZCRkJGQkZCTsKGAoYCjsJGQk7CjsJOwoYCjsJAAWlCjsJGQkZCRkJGQkZCTsKOwkZCTsKGAoYCRkKOwkZCQAF7gY7CRkJGQkZCRkJOwoYChgKOwkZCTsKOwk7ChgKOwkABaUKOwkZCRkJGQkZCRkJOwo7CRkJOwoYChgKGAk8CRkJAAXrCTsJGQkZCRkJGQk7ChgKGAo7CRkJOwo7CTsKGAk8CQAFpgk7CRkJGQkZCRkJGQk7CjsJGQk7ChgKGAoYCjsJGQkABeoKOwkZCRkJGQkZCTsKGAoYCjsJGQk7CjsJOwoYCjsJAAWlCjsJGQkZCRkJGQkZCTsKOwkZCTsKGAoYChgKOwkZCQANBQAAAAAAAAAA'
+#         command_off: 'JgCwBAk7CRkJOwoABaUJPAkZCRkJGQkZCRkJOwk8CRkJOwkZCRkJGQk7ChkJAAXqCTwJGQkZCRkJGQk7CRkJGQk8CRkJOwk8CTsJGQk7CgAFpgk7CRkJGQkZCRkJGQk7CTwJGQk7CRkJGQkZCTsKGQkABeoJPAkZCRkJGQkZCTsJGQkZCTwJGQk7CTwJOwkZCTwJAAWlCTwJGQkZCRkJGQkZCTsJPAkZCTsJGQkZCRkJPAkZCQAF6wk7CRkJGQkZCRkJOwkZCRkJPAkZCTsJPAk7CRkJPAkABaUKOwkZCRkJGQkZCRkJOwk8CRkJOwkZCRkJGQk8CRkJAAXqCjsJGQkZCRkJGQk7CRkJGQk8CRkJOwk8CTsJGQk8CQAFpgk7CRkJGQkZCRkJGQk7CTwJGQk7CRkJGQkZCTwJGQkABeoKOwkZCRkJGQkZCTsJGQkZCTwJGQk7CTwJOwkZCTwJAAWlCjsJGQkZCRkJGQkZCTsJPAkZCTsJGQkZCRkJPAkZCQAF6wk7CRkJGQkZCRkJOwoYCRkJPAkZCTsJPAk7CRkJPAkABaUKOwkZCRkJGQkZCRkJOwk8CRkJOwkZCRkJGQk8CRkJAAXqCjsJGQkZCRkJGQk7CRkJGQk8CRkJOwk8CTsJGQk8CQAFqAc7CRkJGQkZCRkJGQk7CjsJGQk7CRkJGQkZCTwJGQkABeoKOwkZCRkJGQkZCTsKGAkZCTwJGQk7CTwJOwkZCTwJAAWlCjsJGQkZCRkJGQkZCTsKOwkZCTsJGQkZCRkJPAkZCQAF7Ag7CRkJGQkZCRkJOwoYChgJPAkZCTsKOwk7ChgJPAkABaUKOwkZCRkJGQkZCRkJOwo7CRkJOwoYCRkJGQk8CRkJAAXqCjsJGQkZCRkJGQk7ChgKGAo7CRkJOwk8CTsKGAk8CQAFpgk7CRkJGQkZCRkJGQk7CjsJGQk7ChgJGQkZCTwJGQkABeoKOwkZCRkJGQkZCTsKGAoYCjsJGQk7CjsJOwoYCTwJAAWlCjsJGQkZCRkJGQkZCTsKOwkZCTwJGAoYChgJPAkZCQAF7Ag7CRkJGQkZCRkJOwoYChgKOwkZCTsKOwk7ChgJPAkABaUKOwkZCRkJGQkZCRkJOwo7CRkJOwoYChgJGQk8CRkJAAXqCjsJGQkZCRkJGQk7ChgKGAo7CRkJOwo7CTsKGAk8CQAFpgk7CRkJGQkZCRkJGQk7CjsJGQk7ChgKGAkZCTwJGQkABeoKOwkZCRkJGQkZCTsKGAoYCjsJGQk7CjsJOwoYCjsJAAWlCjsJGQkZCRkJGQkZCTsKOwkZCTsKGAoYCRkKOwkZCQAF7gY7CRkJGQkZCRkJOwoYChgKOwkZCTsKOwk7ChgKOwkABaUKOwkZCRkJGQkZCRkJOwo7CRkJOwoYChgKGAk8CRkJAAXrCTsJGQkZCRkJGQk7ChgKGAo7CRkJOwo7CTsKGAk8CQAFpgk7CRkJGQkZCRkJGQk7CjsJGQk7ChgKGAoYCjsJGQkABeoKOwkZCRkJGQkZCTsKGAoYCjsJGQk7CjsJOwoYCjsJAAWlCjsJGQkZCRkJGQkZCTsKOwkZCTsKGAoYChgKOwkZCQANBQAAAAAAAAAA'
+
+camera:
+  - platform: generic
+    name: front_cam
+    authentication: basic
+    verify_ssl: false
+    still_image_url: !secret cam1_still
+    stream_source: !secret cam1_rtsp
+
+  - platform: generic
+    name: back_cam
+    authentication: basic
+    verify_ssl: false
+    still_image_url: !secret cam2_still
+    stream_source: !secret cam2_rtsp
+
+  - platform: generic
+    name: window_cam
+    authentication: basic
+    verify_ssl: false
+    username: cam3_username
+    password: cam3_password
+    still_image_url: !secret cam3_still
+    stream_source: !secret cam3_rtsp
+    scan_interval: 5
+
+  - platform: generic
+    name: puppy_cam
+    authentication: basic
+    verify_ssl: false
+    still_image_url: '/local/img/puppy.png'
+    stream_source: !secret cam4_rtsp
+
+  - platform: generic
+    still_image_url: http://dd.weatheroffice.ec.gc.ca/radar/PRECIPET/GIF/WKR/{{(as_timestamp(now()) - 600) | timestamp_custom('%Y%m%d%H%M', False) | regex_replace(find='(?<=\d{11})\d', replace='0')}}_WKR_PRECIPET_RAIN.gif
+    content_type: image/gif
+    name: weather_radar
+    limit_refetch_to_url_change: true
+
+stream:
+
+homekit:
+- filter:
+    # include_domains:
+    #   - light
+    #   - switch
+    #   - camera
+    #   - climate
+    include_entities:
+      - switch.arcade
+      - switch.spb2_port1
+      - switch.spb2_port2
+      - switch.spb2_port3
+      - switch.spb2_port4
+      - switch.spb2_port5
+      - switch.spb2_port6
+      - switch.balconystringlights
+      - switch.backyardstringlights
+      - camera.front_cam
+      - camera.back_cam
+      - climate.home_2
+    # exclude_entities:
+    #   - switch.back_kitchen
+    #   - switch.beecam2_blue_led
+    #   - switch.beecam2_h264_rtsp_server
+
+  entity_config:
+    camera.front_cam:
+      stream_source: !secret cam1_rtsp
+      support_audio: True
+
+    camera.back_cam:
+      stream_source: !secret cam2_rtsp
+      support_audio: True
+
+    camera.grass_cam:
+      stream_source: !secret cam3_rtsp
+      support_audio: True
+
+ecobee:
+  api_key: !secret ecobee_apikey
+
+lutron_caseta:
+  host: 192.168.1.206
+  keyfile: /ssl/lutron/caseta.key
+  certfile: /ssl/lutron/caseta.crt
+  ca_certs: /ssl/lutron/caseta-bridge.crt
+
+# Nortek Z-Wave & Zigbee USB Dongle
+# zwave:
+#   usb_path: /dev/ttyUSB0
+# zha:
+#   usb_path: /dev/ttyUSB1
+#   database_path: /config/zigbee.db
+
+media_player:
+  - platform: androidtv
+    name: shield_guest
+    host: 192.168.1.169
+  
+  - platform: androidtv
+    name: shield_main
+    host: 192.168.1.57
+
+input_select:
+  camera_dropdown:
+    name: Cast camera
+    options:
+      - Front Camera
+      - Back Camera
+      - Puppy Camera
+      - Window Camera
+      - Cycle Cameras
+      - All Cameras
+    initial: Front Camera
+    icon: mdi:camera
+  cast_to_screen_dropdown:
+    name: To Screen
+    options:
+      - Shield (Main)
+      - Shield (Guest)
+    initial: Shield (Main)
+    icon: mdi:cast
+
+

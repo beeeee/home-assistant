@@ -1,0 +1,9 @@
+
+views:
+  - !include dashboards/00_home_view.yaml
+  - !include dashboards/01_plants_view.yaml
+  - !include dashboards/02_lights_view.yaml
+  - !include dashboards/03_camera_view.yaml
+  - !include dashboards/04_electricity_view.yaml
+  - !include dashboards/05_media_view.yaml
+  - !include dashboards/06_system_view.yaml

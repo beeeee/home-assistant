@@ -1,0 +1,171 @@
+
+    ####################################################
+    #                                                  #
+    #                     SENSORS                      #
+    #                                                  #
+    ####################################################
+
+  - platform: version
+    name: hass_version_installed
+
+  - platform: version
+    name: hass_version_latest
+    source: docker
+  
+  - platform: command_line
+    name: supervisor_updates
+    command: 'curl http://supervisor/supervisor/info -H "Authorization: Bearer $(printenv SUPERVISOR_TOKEN)" | jq ''{"newest_version":.data.version_latest,"current_version":.data.version,"addons":[.data.addons[] | select(.version != .installed)]}'''
+    value_template: "{{ value_json.addons | length }}"
+    json_attributes:
+    - newest_version
+    - current_version
+    - addons
+
+  - platform: filesize
+    file_paths:
+      - /config/home-assistant_v2.db
+      - /config/home-assistant.log
+
+  - platform: uptime
+    name: Uptime
+    unit_of_measurement: hours
+
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /
+      - type: processor_use
+      - type: last_boot
+      - type: memory_use_percent
+      - type: memory_use
+      - type: memory_free
+      - type: disk_use_percent
+        arg: /home
+      - type: disk_use
+        arg: /home
+      - type: disk_free
+        arg: /home
+      - type: ipv4_address
+        arg: enp1s0
+      - type: network_in
+        arg: enp1s0
+      - type: network_out
+        arg: enp1s0
+      - type: throughput_network_in
+        arg: enp1s0
+      - type: throughput_network_out
+        arg: enp1s0
+
+  - platform: authenticated
+    #name: last_successful_authentication
+
+  - platform: command_line
+    name: CPU Temperature
+    command: 'cat /sys/class/thermal/thermal_zone0/temp'
+    unit_of_measurement: '°C'
+    value_template: '{{ value | multiply(0.001) }}'
+
+  - platform: sql
+    db_url: !secret hass_db_url
+    queries:
+      - name: DB Size
+        query: 'SELECT table_schema "database", Round(Sum(data_length + index_length) / 1024 / 1024, 1) "value" FROM information_schema.tables WHERE table_schema="homeassistant" GROUP BY table_schema;'
+        column: 'value'
+        unit_of_measurement: MB
+
+  - platform: time_date
+    display_options:
+      ['time', 'date']
+
+  - platform: darksky
+    api_key: !secret darksky_api_key
+    language: en
+    monitored_conditions:
+      ['precip_probability', 'temperature', 'apparent_temperature', 'icon']
+
+  - platform: plex_recently_added
+    token: !secret plex_token
+    host: !secret plex_host
+    port: !secret plex_port
+    max: 1
+    img_dir: '/'
+    image_resolution: 500
+
+  - platform: feedparser
+    name: random_thoughts
+    feed_url: 'https://www.reddit.com/r/Showerthoughts/.rss'
+    date_format: '%a, %b %d %I:%M %p'
+    inclusions:
+      - entry
+      - title
+
+  - platform: here_travel_time
+    api_key: !secret HERELOC_APIKEY
+    name: "brandon_commute_time"
+    traffic_mode: true
+    scan_interval: 900
+    origin_latitude: !secret HERELOC_HOMELOCLAT
+    origin_longitude: !secret HERELOC_HOMELOCLON
+    destination_latitude: !secret HERELOC_BRANDONWORKLAT
+    destination_longitude: !secret HERELOC_BRANDONWORKLON
+
+  - platform: here_travel_time
+    api_key: !secret HERELOC_APIKEY
+    name: "katrina_commute_time"
+    traffic_mode: true
+    scan_interval: 900
+    origin_latitude: !secret HERELOC_HOMELOCLAT
+    origin_longitude: !secret HERELOC_HOMELOCLON
+    destination_latitude: !secret HERELOC_KATRINAWORKLAT
+    destination_longitude: !secret HERELOC_KATRINAWORKLON
+
+  - platform: template
+    sensors:
+    #----- Count Automations
+      count_automations:
+        #entity_id: sensor.date
+        value_template: "{{ states.automation | list | length }}"
+    #----- Count Scripts
+      count_scripts:
+        #entity_id: sensor.date
+        value_template: "{{ states.script| list | length }}"
+    #----- Count Device Trackers
+      count_device_trackers:
+        #entity_id: sensor.date
+        value_template: "{{ states.device_tracker | list | length }}"
+    #----- Count Binary Sensors
+      count_binary_sensors:
+        #entity_id: sensor.date
+        value_template: "{{ states.binary_sensor| list | length }}"
+    #----- Count Sensors
+      count_sensors:
+        #entity_id: sensor.date
+        value_template: "{{ states.sensor | list | length }}"
+    #----- Count Switches
+      count_switches:
+        #entity_id: sensor.date
+        value_template: "{{ states.switch | list | length }}"
+    #----- Count Zones
+      count_zones:
+        #entity_id: sensor.date
+        value_template: "{{ states.zone | list | length }}"
+    #----- Input Booleans
+      count_input_booleans:
+        #entity_id: sensor.date
+        value_template: "{{ states.input_boolean | list | length }}"
+    #----- Input Numbers
+      count_input_numbers:
+        #entity_id: sensor.date
+        value_template: "{{ states.input_number | list | length }}"
+    #----- Input Texts
+      count_input_texts:
+        #entity_id: sensor.date
+        value_template: "{{ states.input_text | list | length }}"
+    #----- Input Selects
+      count_input_selects:
+        #entity_id: sensor.date
+        value_template: "{{ states.input_select | list | length }}"
+    #----- Input Date Times
+      count_input_datetimes:
+        #entity_id: sensor.date
+        value_template: "{{ states.input_datetime | list | length }}"

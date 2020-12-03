@@ -1,0 +1,10 @@
+
+views:
+  - !include lovelace/00_home_view.yaml
+  - !include lovelace/01_electrical_view.yaml
+  - !include lovelace/02_lights_switches_view.yaml
+  - !include lovelace/03_camera_view.yaml
+  - !include lovelace/04_plant_view.yaml
+  - !include lovelace/05_people_view.yaml
+  - !include lovelace/06_devices_view.yaml
+  - !include lovelace/07_settings_view.yaml

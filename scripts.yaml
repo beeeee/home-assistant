@@ -1,0 +1,23 @@
+
+  execute_cast_dropdown:
+    alias: Cast
+    sequence:
+      - service: camera.play_stream
+        data_template:
+          entity_id: >
+            {% if is_state("input_select.camera_dropdown", "Front Camera") %}
+              camera.front_cam
+            {% elif is_state("input_select.camera_dropdown", "Back Camera") %}
+              camera.back_cam
+            {% elif is_state("input_select.camera_dropdown", "Puppy Camera") %}
+              camera.puppy_cam
+            {% elif is_state("input_select.camera_dropdown", "Window Camera") %}
+              camera.window_cam
+            {% endif %}
+
+          media_player: >
+            {% if is_state("input_select.cast_to_screen_dropdown", "Shield (Main)") %}
+              media_player.shield_4
+            {% elif is_state("input_select.cast_to_screen_dropdown", "Shield (Guest)") %}
+              media_player.shield_2
+            {% endif %}
